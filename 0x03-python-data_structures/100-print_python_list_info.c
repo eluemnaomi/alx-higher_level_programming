@@ -1,30 +1,18 @@
-#include "print_python_list.h"
-
+#include <stdlib.h>
+#include <stdio.h>
+#include <Python.h>
 /**
- * print_python_list_info - Prints basic information about a Python list
- * @p: PyObject representing the Python list
+ * print_python_list_info -  function that prints some basic
+ *							info about Python lists
+ * @p: python list
  */
 void print_python_list_info(PyObject *p)
 {
-Py_ssize_t size, i;
-PyObject *item;
-if (!PyList_Check(p)) 
-{
-fprintf(stderr, "Invalid list object\n");
-return;
+	int elem;
+
+	printf("[*] Size of the Python List = %lu\n", Py_SIZE(p));
+	printf("[*] Allocated = %lu\n", ((PyListObject *)p)->allocated);
+	for (elem = 0; elem < Py_SIZE(p); elem++)
+		printf("Element %d: %s\n", elem, Py_TYPE(PyList_GetItem(p, elem))->tp_name);
 }
 
-size = PyList_Size(p);
-
-printf("[*] Size of the Python List = %ld\n", size);
-printf("[*] Allocated = %ld\n", ((PyListObject *)p)->allocated);
-
-for (i = 0; i < size; i++) 
-{
-item = PyList_GetItem(p, i);
-printf("Element %ld: %s\n", i, Py_TYPE(item)->tp_name);
-}
-}
-/* Example of how to compile the shared library:
- * gcc -Wall -Werror -Wextra -pedantic -std=c99 -shared -Wl,-soname,PyList -o libPyList.so -fPIC -I/usr/include/python3.4 100-print_python_list_info.c
- */
