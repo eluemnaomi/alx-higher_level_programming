@@ -1,17 +1,27 @@
 #!/usr/bin/python3
-"""  display all table in a state where name matched the arg """
-import MySQLdb
+
+"""
+This script takes in an argument and displays all values in the 'states'
+table of 'hbtn_0e_0_usa' where 'name' matches the argument
+"""
+
 import sys
+import MySQLdb
 
+if __name__ == '__main__':
 
-if __name__ == "__main__":
-    db = MySQLdb.connect(host="localhost", user=sys.argv[1],
-                         passwd=sys.argv[2], db=sys.argv[3], port=3306)
-    c = db.cursor()
-    c.execute("SELECT * FROM states WHERE name LIKE BINARY '{}'"
-                .format(sys.argv[4]))
-    rows = c.fetchall()
-    for row in rows:
-        print(row)
-    c.close()
-    db.close()
+    args = sys.argv
+
+    db = MySQLdb.connect(host='localhost',
+                         user=args[1], passwd=args[2], db=args[3])
+
+    conn = db.cursor()
+
+    conn.execute("SELECT * FROM states \
+        WHERE CONVERT(`name` using Latin1) \
+        COLLATE latin1_General_CS = '{}';".format(args[4]))
+
+    states = conn.fetchall()
+
+    for state in states:
+        print(state)
